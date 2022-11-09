@@ -183,5 +183,36 @@ insert into Car
 values ('A5698', 'S', '2', 'Fiat', 'Siena', '2021-01-01', 'Branco' , 'HMW-5498');
 
 
+insert into Person
+values ('123456789', '1', 'Gilmar', 'Junior'),
+		('987654321', '3', 'Camilo', 'Lelis'),
+		('654321789', '4', 'Lucas', 'Moragas'),
+		('987612345', '3', 'Matheus', 'Maia');
 
+create or replace function fn_altera_AdressID_pela_carteira()
+returns trigger
+as $$
+begin
+	update Person
+	set Adress_ID = '3'
+	where NEW.Driver_License like '9%' and NEW.Driver_License = Driver_License;
+	return new;
+end;
+$$
+language 'plpgsql';
+
+create or replace trigger tg_altera_AdressID_pela_carteira after insert
+on Person for each row
+execute procedure fn_altera_AdressID_pela_carteira();
+
+select * from Person;
+
+insert into Person
+values ('912873465', '1', 'Bruno', 'Ramos');
+
+select * from Person;
+
+
+
+	
 
