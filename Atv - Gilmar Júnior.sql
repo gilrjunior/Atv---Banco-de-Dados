@@ -139,6 +139,48 @@ create table RentalRate(
 
 );
 
+insert into Adress
+values ('4', 120, 'R Cristina', 'Belo Horizonte', 'Minas Gerais', '30310-692', false),
+		('3', 324, 'Av Analice Sturlini', 'Osaco', 'São Paulo', '06018-105', true),
+		('2', 876, 'R Goiás', 'Uberaba', 'Minas Gerais', '35574-282', false),
+		('1', 653, 'R Bromélias', 'Rio de Janeiro', 'Rio de Janeiro', '22776-040', false);
+		
+insert into CarClass
+values('H', 'Hatch - Os automóveis dessa categoria apresentam um tamanho compacto e oferecem algumas vantagens, como boa dirigibilidade e maior facilidade para manobrar.'),
+		('S', 'Sedan - Os automóveis sedan atendem principalmente aos consumidores que necessitam de um amplo porta-malas para suas atividades do dia a dia.'),
+		('P', 'Picape - A picapes, ou pick-ups, em inglês, são um tipo de veículo com uma caçamba na parte traseira.'),
+		('SUV', 'Essa categoria apresenta veículos robustos, com altura em relação ao solo e comodidade interna maiores.');
+
+select * from Car;
+
+insert into Car 
+values ('A3847', 'H','4', 'Renault', 'Sandero', '2020-01-01', 'Preto' , 'HZU-3377'),
+		('A9054', 'H','4', 'Renault', 'Logan', '2018-01-01', 'Azul', 'JZK-4434'),
+		('A1203', 'H','2', 'VolksWaguen', 'Golf GTI', '2021-01-01', 'Branco', 'HTA5P09'),
+		('A7892', 'H','3', 'Fiat', 'Argo', '2022-01-01', 'Prata', 'PJT8F23'),
+		('A0349', 'S','1', 'Fiat', 'Siena', '2017-01-01', 'vermelho', 'DHF-4563');
+
+create or replace function fn_atualiza_data()
+returns trigger
+as $$
+begin
+	
+	if New.YearC >= '2020-01-01' then
+	update Car
+	set YearC = current_date
+	where New.CarID = CarID;
+	end if;
+	return new;
+end;
+$$
+language 'plpgsql';
+
+create or replace trigger tg_atualiza_data after insert
+on Car for each row
+execute procedure fn_atualiza_data();
+
+insert into Car 
+values ('A5698', 'S', '2', 'Fiat', 'Siena', '2021-01-01', 'Branco' , 'HMW-5498');
 
 
 
