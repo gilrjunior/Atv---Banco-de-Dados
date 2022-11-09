@@ -212,7 +212,40 @@ values ('912873465', '1', 'Bruno', 'Ramos');
 
 select * from Person;
 
+insert into EmployeeType
+values ('Faxineiro'),
+		('Motoristas'),
+		('Gerentes'),
+		('Balconistas');
+		
+insert into Employee
+values ('123456789', '1', 'Motoristas', false, false),
+		('654321789', '4', 'Balconistas', false, false ),
+		('987612345', '3', 'Gerentes', false, false);
 
+create or replace function fn_altera_cargo_gerentes()
+returns trigger
+as $$
+begin
+	
+	if NEW.Is_president = true then
+	update Employee
+	set Employee_type = 'Gerentes'
+	where NEW.Driver_License = Driver_License;
+	end if;
+	return new;
+end;
+$$
+language 'plpgsql';
 
+create or replace trigger tg_altera_cargo_gerentes after update
+on Employee for each row
+execute procedure fn_altera_cargo_gerentes();
+
+update Employee
+set Is_president = true
+where Driver_License = '654321789';
+
+select * from Employee;
 	
 
