@@ -212,42 +212,6 @@ values ('912873465', '1', 'Bruno', 'Ramos');
 
 select * from Person;
 
-insert into EmployeeType
-values ('Faxineiro'),
-		('Motoristas'),
-		('Gerentes'),
-		('Balconistas');
-		
-insert into Employee
-values ('123456789', '1', 'Motoristas', false, false),
-		('654321789', '4', 'Balconistas', false, false ),
-		('987612345', '3', 'Gerentes', false, false);
-
-create or replace function fn_altera_cargo_gerentes()
-returns trigger
-as $$
-begin
-	
-	if NEW.Is_president = true then
-	update Employee
-	set Employee_type = 'Gerentes'
-	where NEW.Driver_License = Driver_License;
-	end if;
-	return new;
-end;
-$$
-language 'plpgsql';
-
-create or replace trigger tg_altera_cargo_gerentes after update
-on Employee for each row
-execute procedure fn_altera_cargo_gerentes();
-
-update Employee
-set Is_president = true
-where Driver_License = '654321789';
-
-select * from Employee;
-	
 create or replace function fn_insere_customer()
 returns trigger
 as $$
@@ -268,4 +232,36 @@ insert into Person
 values ('564738291', '2', 'Vitor', 'Barros');
 
 select * from Customer;
+
+insert into EmployeeType
+values ('Faxineiro'),
+		('Motoristas'),
+		('Gerentes'),
+		('Balconistas');
+		
+insert into Employee
+values ('123456789', '1', 'Motoristas', false, false),
+		('654321789', '4', 'Balconistas', false, false ),
+		('987612345', '3', 'Gerentes', false, false);
+
+create or replace function fn_remove_pela_Driver_License()
+returns trigger
+as $$
+begin
+	delete from Employee where OLD.Driver_License = Driver_License;
+	delete from Customer where OLD.Driver_License = Driver_License;
+	return OLD;
+end;
+$$
+language 'plpgsql';
+
+create or replace trigger tg_remove_pela_Driver_License before delete
+on Person for each row
+execute procedure fn_remove_pela_Driver_License();
+
+delete from Person where Driver_License = '123456789';
+
+select * from Person;
+select * from customer;
+select * from Employee;
 
