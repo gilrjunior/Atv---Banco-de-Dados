@@ -248,4 +248,24 @@ where Driver_License = '654321789';
 
 select * from Employee;
 	
+create or replace function fn_insere_customer()
+returns trigger
+as $$
+begin
+	insert into customer values(NEW.Driver_License);
+	return new;
+end;
+$$
+language 'plpgsql';
+
+create or replace trigger tg_insere_customer after insert
+on Person for each row
+execute procedure fn_insere_customer();
+
+select * from Customer;
+
+insert into Person
+values ('564738291', '2', 'Vitor', 'Barros');
+
+select * from Customer;
 
