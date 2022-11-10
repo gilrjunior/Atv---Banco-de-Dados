@@ -139,6 +139,76 @@ create table RentalRate(
 
 );
 
+create table LogsPerson(
+
+	UserName varchar(60),
+	date_time timestamp,
+	Operation varchar(20)
+
+);
+
+create or replace function fn_insert_log()
+returns trigger
+as $$
+begin
+	insert into LogsPerson values (current_user, now(), 'INSERT');
+	return new;
+end;
+$$
+language 'plpgsql';
+
+create or replace trigger tg_insert_log after insert
+on Person for each row
+execute procedure fn_insert_log();
+
+create or replace function fn_update_log()
+returns trigger
+as $$
+begin
+	insert into LogsPerson values (current_user, now(), 'UPDATE');
+	return new;
+end;
+$$
+language 'plpgsql';
+
+create or replace trigger tg_update_log after update
+on Person for each row
+execute procedure fn_update_log();
+
+create or replace function fn_delete_log()
+returns trigger
+as $$
+begin
+	insert into LogsPerson values (current_user, now(), 'DELETE');
+	return new;
+end;
+$$
+language 'plpgsql';
+
+create or replace trigger tg_delete_log after delete
+on Person for each row
+execute procedure fn_delete_log();
+
+insert into Person
+values ('1020304050', '1', 'José', 'Paulo');
+
+select * from LogsPerson;
+
+delete from Person where Driver_License = '1020304050';
+
+select * from LogsPerson;
+
+insert into Person
+values ('1020304050', '1', 'José', 'Paulo');
+
+update Person
+set Adress_ID = '4'
+where Driver_License = '1020304050';
+
+select * from LogsPerson;
+
+
+
 insert into Adress
 values ('4', 120, 'R Cristina', 'Belo Horizonte', 'Minas Gerais', '30310-692', false),
 		('3', 324, 'Av Analice Sturlini', 'Osaco', 'São Paulo', '06018-105', true),
